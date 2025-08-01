@@ -20,18 +20,24 @@ jobs:
           python -m pip install --upgrade pip
           pip install buildozer cython
 
-      - name: Build APK
+      - name: Install system dependencies
         run: |
           sudo apt update
           sudo apt install -y git zip unzip openjdk-17-jdk
+
+      - name: Initialize Buildozer
+        run: |
           buildozer init
           sed -i 's/package.name = myapp/package.name = submitter/' buildozer.spec
           sed -i 's/source.include_exts = py,png,jpg,kv,atlas/source.include_exts = py,png,jpg,kv,atlas/' buildozer.spec
           echo "kivy,kivymd" > requirements.txt
+
+      - name: Build APK
+        run: |
           buildozer android debug
 
       - name: Upload APK
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: Submitter-APK
+          name: submitter-apk
           path: bin/*.apk
